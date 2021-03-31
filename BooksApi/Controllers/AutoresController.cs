@@ -5,6 +5,7 @@ using BooksApi.Helpers;
 using BooksApi.Models;
 using BooksApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -90,15 +91,36 @@ namespace BooksApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] Autor autor)
+        public async Task<ActionResult> Put(int id, [FromBody] AutorCreationDTO autorActualizacion)
         {
-            if (id != autor.Id)
-            {
-                return BadRequest();
-            }
+            var autor = mapper.Map<Autor>(autorActualizacion);
+            autor.Id = id;
+
             context.Entry(autor).State = EntityState.Modified;
             await context.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<Autor> jsonPatchDocument)
+        {
+            if (jsonPatchDocument == null)
+            {
+                return BadRequest();
+            }
+            var autorDeLaDB = await context.Autores.FirstOrDefaultAsync(x => x.Id == id);
+            if (autorDeLaDB == null)
+            {
+                return NotFound();
+            }
+            jsonPatchDocument.ApplyTo(autorDeLaDB, ModelState);
+            var isValid = TryValidateModel(autorDeLaDB);
+            if (!isValid)
+            {
+                return BadRequest(ModelState);
+            }
+            await context.SaveChangesAsync();
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
