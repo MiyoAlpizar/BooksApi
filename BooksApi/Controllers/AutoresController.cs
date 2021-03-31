@@ -1,5 +1,6 @@
 ﻿using BooksApi.Context;
 using BooksApi.Entities;
+using BooksApi.Helpers;
 using BooksApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace BooksApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDBContext context;
@@ -30,6 +31,7 @@ namespace BooksApi.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(MyActionFilter))]
         public async Task<ActionResult<IEnumerable<Autor>>> Get()
         {
             logger.LogInformation("Getting authors");
@@ -53,6 +55,12 @@ namespace BooksApi.Controllers
         public ActionResult<string> GetTime()
         {
             return DateTime.Now.ToString();
+        }
+
+        [HttpGet("NoAutor")]//Sets end point https://localhost:44383/api/autores/NoAutor
+        public ActionResult<string> GetNoAutor()
+        {
+            return "No existe el autor";
         }
 
         [HttpPost]

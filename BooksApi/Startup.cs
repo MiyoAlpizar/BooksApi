@@ -1,4 +1,5 @@
 using BooksApi.Context;
+using BooksApi.Helpers;
 using BooksApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,7 @@ namespace BooksApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddResponseCaching(); // Para guardar en caché
+            services.AddScoped<MyActionFilter>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddTransient<IEmailService, EmalService>(); //Se genera una nueva instancia de la clase
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
