@@ -126,15 +126,16 @@ namespace BooksApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Autor>> Delete(int id)
         {
-            var autor = await context.Autores.FirstOrDefaultAsync(x => x.Id == id);
+            //Solo retorna el campo ID, lo que hace el query más rápido
+            var autorId = await context.Autores.Select(x => x.Id).FirstOrDefaultAsync(x => x == id);
 
-            if (autor == null)
+            if (autorId == default)
             {
                 return NotFound();
             }
-            context.Autores.Remove(autor);
+            context.Autores.Remove(new Autor { Id = autorId });
             await context.SaveChangesAsync();
-            return autor;
+            return NoContent();
         }
     }
 }
