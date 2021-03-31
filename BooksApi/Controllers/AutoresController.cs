@@ -1,6 +1,7 @@
 ﻿using BooksApi.Context;
 using BooksApi.Entities;
 using BooksApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace BooksApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDBContext context;

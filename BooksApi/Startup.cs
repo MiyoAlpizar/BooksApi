@@ -1,5 +1,6 @@
 using BooksApi.Context;
 using BooksApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,11 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+
 
 namespace BooksApi
 {
@@ -29,6 +27,7 @@ namespace BooksApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddResponseCaching(); // Para guardar en caché
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddTransient<IEmailService, EmalService>(); //Se genera una nueva instancia de la clase
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -45,7 +44,7 @@ namespace BooksApi
             app.UseHttpsRedirection();
 
             app.UseResponseCaching();//Para acpetar caching
-            
+            app.UseAuthentication();
             app.UseRouting();
 
             app.UseAuthorization();
