@@ -13,8 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
 
 namespace BooksApi
 {
@@ -35,6 +36,17 @@ namespace BooksApi
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:key"])), ClockSkew = TimeSpan.Zero
+                    };
+                });
 
             services.AddTransient<IWriterFile, WriterFile>();
             services.AddTransient<IHostedService, WriteToFileHostedService>();
