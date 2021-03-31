@@ -36,7 +36,7 @@ namespace BooksApi.Controllers
             var result = await userManager.CreateAsync(user, userInfo.Password);
             if (result.Succeeded)
             {
-                return BuildToken(userInfo);
+                return BuildToken(userInfo, new List<string>());
             }else
             {
                 return BadRequest("Username or passwrod invalid");
@@ -49,7 +49,9 @@ namespace BooksApi.Controllers
             var result = await signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: true, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                return BuildToken(userInfo);
+                var usuario = await userManager.FindByEmailAsync(userInfo.Email);
+                var roles = await userManager.GetRolesAsync(usuario);
+                return BuildToken(userInfo, roles);
             }else
             {
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
@@ -57,14 +59,20 @@ namespace BooksApi.Controllers
             }
         }
 
-        private UserToken BuildToken(UserInfo userInfo)
+        private UserToken BuildToken(UserInfo userInfo, IList<string> roles)
         {
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                 new Claim("miValor", "Lo que yo quiera"),
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            foreach (var item in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, item));
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiration = DateTime.Now.AddHours(1);

@@ -152,6 +152,15 @@ namespace BooksApi.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "0b7d4e58-37a5-4f8f-99d6-7479d9333e75",
+                            ConcurrencyStamp = "628ff7fb-059d-42c8-9a18-230c820a2662",
+                            Name = "admin",
+                            NormalizedName = "Administrador"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
