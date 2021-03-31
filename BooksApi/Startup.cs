@@ -28,8 +28,8 @@ namespace BooksApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCaching(); // Para guardar en caché
             services.AddTransient<IEmailService, EmalService>(); //Se genera una nueva instancia de la clase
-           
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
@@ -44,6 +44,8 @@ namespace BooksApi
 
             app.UseHttpsRedirection();
 
+            app.UseResponseCaching();//Para acpetar caching
+            
             app.UseRouting();
 
             app.UseAuthorization();

@@ -46,6 +46,13 @@ namespace BooksApi.Controllers
             return autor;
         }
 
+        [HttpGet("time")]//Sets end point https://localhost:44383/api/autores/time
+        [ResponseCache(Duration =15)]
+        public ActionResult<string> GetTime()
+        {
+            return DateTime.Now.ToString();
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Autor autor)
         {
