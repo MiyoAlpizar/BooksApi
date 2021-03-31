@@ -1,6 +1,8 @@
-﻿using BooksApi.Context;
+﻿using AutoMapper;
+using BooksApi.Context;
 using BooksApi.Entities;
 using BooksApi.Helpers;
+using BooksApi.Models;
 using BooksApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,32 +24,35 @@ namespace BooksApi.Controllers
         private readonly ApplicationDBContext context;
         private readonly IEmailService emalService;
         private readonly ILogger<AutoresController> logger;
+        private readonly IMapper mapper;
 
-        public AutoresController(ApplicationDBContext context, IEmailService emalService, ILogger<AutoresController> logger)
+        public AutoresController(ApplicationDBContext context, IEmailService emalService, ILogger<AutoresController> logger, IMapper mapper)
         {
             this.context = context;
             this.emalService = emalService;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         [ServiceFilter(typeof(MyActionFilter))]
-        public async Task<ActionResult<IEnumerable<Autor>>> Get()
+        public async Task<ActionResult<IEnumerable<AutorDTO>>> Get()
         {
             logger.LogInformation("Getting authors");
             var messge = emalService.SendEmail();
-            return await context.Autores.ToListAsync();
+            var autores = await context.Autores.ToListAsync();
+            return mapper.Map<List<AutorDTO>>(autores);
         }
 
         [HttpGet("{id}", Name = "ObtenerAutor")]
-        public async Task<ActionResult<Autor>> Get(int id, [BindRequired] string nombre, bool incluyeDireccion = false) // Son QueryStrings donde nombre es requerido a webo
+        public async Task<ActionResult<AutorDTO>> Get(int id, [BindRequired] string nombre, bool incluyeDireccion = false) // Son QueryStrings donde nombre es requerido a webo
         {
             var autor = await context.Autores.FindAsync(id);
             if (autor == null)
             {
                 return NotFound();
             }
-            return autor;
+            return mapper.Map<AutorDTO>(autor);
         }
 
         [HttpGet("time")]//Sets end point https://localhost:44383/api/autores/time
