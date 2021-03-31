@@ -37,6 +37,7 @@ namespace BooksApi
                     {
                         config.CreateMap<Autor, AutorDTO>();
                         config.CreateMap<Libro, LibroDTO>();
+                        config.CreateMap<AutorCreationDTO, Autor>();
                     },
                 typeof(Startup)) ;
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();

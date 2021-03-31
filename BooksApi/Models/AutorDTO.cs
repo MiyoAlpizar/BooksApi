@@ -17,7 +17,14 @@ namespace BooksApi.Models
         public string Nombre { get; set; }
 
         public List<LibroDTO> Libros { get; set; }
+    }
 
+    public class AutorCreationDTO
+    {
+        
+        [Required]
+        [PrimeraMayuscula]
+        public string Nombre { get; set; }    
         public string Clave { get; set; }
     }
 }

@@ -45,7 +45,7 @@ namespace BooksApi.Controllers
         }
 
         [HttpGet("{id}", Name = "ObtenerAutor")]
-        public async Task<ActionResult<AutorDTO>> Get(int id, [BindRequired] string nombre, bool incluyeDireccion = false) // Son QueryStrings donde nombre es requerido a webo
+        public async Task<ActionResult<AutorDTO>> Get(int id)
         {
             var autor = await context.Autores.FindAsync(id);
             if (autor == null)
@@ -54,6 +54,17 @@ namespace BooksApi.Controllers
             }
             return mapper.Map<AutorDTO>(autor);
         }
+
+        //[HttpGet("{id}", Name = "ObtenerAutorName")]
+        //public async Task<ActionResult<AutorDTO>> GetByName(int id, [BindRequired] string nombre, bool incluyeDireccion = false) // Son QueryStrings donde nombre es requerido a webo
+        //{
+        //    var autor = await context.Autores.FindAsync(id);
+        //    if (autor == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return mapper.Map<AutorDTO>(autor);
+        //}
 
         [HttpGet("time")]//Sets end point https://localhost:44383/api/autores/time
         [ResponseCache(Duration =15)]
@@ -69,11 +80,13 @@ namespace BooksApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Autor autor)
+        public async Task<ActionResult> Post([FromBody] AutorCreationDTO autorCreator)
         {
+            var autor = mapper.Map<Autor>(autorCreator);
             context.Autores.Add(autor);
             await context.SaveChangesAsync();
-            return new CreatedAtRouteResult("ObtenerAutor", new { id = autor.Id }, autor);
+            var autorDTO = mapper.Map<AutorDTO>(autor);
+            return new CreatedAtRouteResult("ObtenerAutor", new { id = autor.Id }, autorDTO);
         }
 
         [HttpPut("{id}")]
