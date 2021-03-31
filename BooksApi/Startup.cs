@@ -33,6 +33,7 @@ namespace BooksApi
             services.AddTransient<IHostedService, WriteToFileHostedService>();
             services.AddResponseCaching(); // Para guardar en caché
             services.AddScoped<MyActionFilter>();
+            //Mapea Entities a DTOs
             services.AddAutoMapper(config =>
                     {
                         config.CreateMap<Autor, AutorDTO>();

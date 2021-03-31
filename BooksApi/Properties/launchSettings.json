@@ -14,6 +14,7 @@
       "launchBrowser": true,
       "launchUrl": "api/autores",
       "environmentVariables": {
+        "MiNombre": "Alpizar",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

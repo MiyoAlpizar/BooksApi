@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -26,13 +27,15 @@ namespace BooksApi.Controllers
         private readonly IEmailService emalService;
         private readonly ILogger<AutoresController> logger;
         private readonly IMapper mapper;
+        private readonly IConfiguration configuration;
 
-        public AutoresController(ApplicationDBContext context, IEmailService emalService, ILogger<AutoresController> logger, IMapper mapper)
+        public AutoresController(ApplicationDBContext context, IEmailService emalService, ILogger<AutoresController> logger, IMapper mapper, IConfiguration configuration)
         {
             this.context = context;
             this.emalService = emalService;
             this.logger = logger;
             this.mapper = mapper;
+            this.configuration = configuration;
         }
 
         [HttpGet]
@@ -56,16 +59,11 @@ namespace BooksApi.Controllers
             return mapper.Map<AutorDTO>(autor);
         }
 
-        //[HttpGet("{id}", Name = "ObtenerAutorName")]
-        //public async Task<ActionResult<AutorDTO>> GetByName(int id, [BindRequired] string nombre, bool incluyeDireccion = false) // Son QueryStrings donde nombre es requerido a webo
-        //{
-        //    var autor = await context.Autores.FindAsync(id);
-        //    if (autor == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return mapper.Map<AutorDTO>(autor);
-        //}
+        [HttpGet("Name", Name = "ObtenerAutorName")]
+        public  ActionResult<string> GetName([BindRequired] string nombre) // Son QueryStrings donde nombre es requerido a webo
+        {
+            return configuration["MiNombre"].ToString() + " " + nombre;
+        }
 
         [HttpGet("time")]//Sets end point https://localhost:44383/api/autores/time
         [ResponseCache(Duration =15)]
