@@ -1,6 +1,7 @@
 ﻿using BooksApi.Context;
 using BooksApi.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace BooksApi.Controllers
         }
 
         [HttpGet("{id}", Name = "ObtenerAutor")]
-        public async Task<ActionResult<Autor>> Get(int id)
+        public async Task<ActionResult<Autor>> Get(int id, [BindRequired] string nombre, bool incluyeDireccion = false) // Son QueryStrings donde nombre es requerido a webo
         {
             var autor = await context.Autores.FindAsync(id);
             if (autor == null)
