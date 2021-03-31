@@ -1,5 +1,6 @@
 ﻿using BooksApi.Context;
 using BooksApi.Entities;
+using BooksApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,15 +15,18 @@ namespace BooksApi.Controllers
     public class LibrosController : ControllerBase
     {
         private readonly ApplicationDBContext context;
+        private readonly IEmailService emalService;
 
-        public LibrosController(ApplicationDBContext context)
+        public LibrosController(ApplicationDBContext context, IEmailService emalService)
         {
             this.context = context;
+            this.emalService = emalService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Libro>>> Get()
         {
+            var message = emalService.SendEmail();
             return await context.Libros.Include(x => x.Autor).ToListAsync();
         }
 

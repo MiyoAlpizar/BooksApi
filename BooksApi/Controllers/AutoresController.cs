@@ -1,8 +1,10 @@
 ﻿using BooksApi.Context;
 using BooksApi.Entities;
+using BooksApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +17,21 @@ namespace BooksApi.Controllers
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDBContext context;
+        private readonly IEmailService emalService;
+        private readonly ILogger<AutoresController> logger;
 
-        public AutoresController(ApplicationDBContext context)
+        public AutoresController(ApplicationDBContext context, IEmailService emalService, ILogger<AutoresController> logger)
         {
             this.context = context;
+            this.emalService = emalService;
+            this.logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Autor>>> Get()
         {
+            logger.LogInformation("Getting authors");
+            var messge = emalService.SendEmail();
             return await context.Autores.ToListAsync();
         }
 
